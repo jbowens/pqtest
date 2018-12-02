@@ -53,8 +53,8 @@ func SchemaFile(filePath string) Option {
 // Open creates a new test PostgreSQL database, returning
 // a *sql.DB opened to the database.
 //
-// If there are existing that were created by the pgtest
-// package more than 3 minutes ago, it'll delete them.
+// Databases created by pgtest are garbage collected by
+// subsequent calls to pgtest.Open.
 func Open(f Fataler, opts ...Option) *sql.DB {
 	data := optionData{
 		databaseURL: "postgres:///postgres?sslmode=disable",
