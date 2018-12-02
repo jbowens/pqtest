@@ -1,4 +1,4 @@
-# pgtest
-[![GoDoc](https://godoc.org/github.com/jbowens/pgtest?status.svg)](https://godoc.org/github.com/jbowens/pgtest)
+# pqtest
+[![GoDoc](https://godoc.org/github.com/jbowens/pqtest?status.svg)](https://godoc.org/github.com/jbowens/pqtest)
 
-pgtest is a simple package for creating PostgreSQL databases in Go tests.
+pqtest is a simple package for creating PostgreSQL databases in Go tests.

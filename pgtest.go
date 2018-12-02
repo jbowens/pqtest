@@ -1,4 +1,4 @@
-package pgtest
+package pqtest
 
 import (
 	"database/sql"
@@ -53,8 +53,8 @@ func SchemaFile(filePath string) Option {
 // Open creates a new test PostgreSQL database, returning
 // a *sql.DB opened to the database.
 //
-// Databases created by pgtest are garbage collected by
-// subsequent calls to pgtest.Open.
+// Databases created by pqtest are garbage collected by
+// subsequent calls to pqtest.Open.
 func Open(f Fataler, opts ...Option) *sql.DB {
 	data := optionData{
 		databaseURL: "postgres:///postgres?sslmode=disable",
@@ -129,7 +129,7 @@ func randomDBName(file string) (dbname string) {
 }
 
 func formatDBName(suffix string, t time.Time) string {
-	dbname := "pgtest_" + t.UTC().Format(timeFormat) + "Z_" + suffix
+	dbname := "pqtest_" + t.UTC().Format(timeFormat) + "Z_" + suffix
 	return dbname
 }
 
@@ -138,7 +138,7 @@ func garbageCollectDBs(db *sql.DB) error {
 	gcTime := time.Now().Add(-gcDur)
 	const q = `
 		SELECT datname FROM pg_database
-		WHERE datname LIKE 'pgtest_%' AND datname < $1
+		WHERE datname LIKE 'pqtest_%' AND datname < $1
 	`
 	rows, err := db.Query(q, formatDBName("db", gcTime))
 	if err != nil {

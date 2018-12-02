@@ -1,4 +1,4 @@
-package pgtest
+package pqtest
 
 import "testing"
 
