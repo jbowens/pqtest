@@ -31,7 +31,7 @@ type Option interface {
 }
 
 type optionData struct {
-	schema      string
+	schema      []string
 	schemaPaths []string
 	databaseURL string
 }
@@ -68,7 +68,7 @@ func Open(f Fataler, opts ...Option) *sql.DB {
 		if err != nil {
 			f.Fatal(sp, err)
 		}
-		data.schema = data.schema + "\n" + string(schemaBytes)
+		data.schema = append(data.schema, string(schemaBytes))
 	}
 
 	newDatabaseURL, err := mkdb(data.databaseURL)
@@ -79,8 +79,8 @@ func Open(f Fataler, opts ...Option) *sql.DB {
 	if err != nil {
 		f.Fatal(err)
 	}
-	if data.schema != "" {
-		_, err = db.Exec(data.schema)
+	for _, schema := range data.schema {
+		_, err = db.Exec(schema)
 		if err != nil {
 			f.Fatal(err)
 		}
