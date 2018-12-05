@@ -32,7 +32,7 @@ type Option interface {
 
 type optionData struct {
 	schema      string
-	schemaPath  string
+	schemaPaths []string
 	databaseURL string
 }
 
@@ -46,7 +46,7 @@ func (of optionFn) apply(f Fataler, data *optionData) {
 // test database the schema at the provided filePath.
 func SchemaFile(filePath string) Option {
 	return optionFn(func(f Fataler, data *optionData) {
-		data.schemaPath = filePath
+		data.schemaPaths = append(data.schemaPaths, filePath)
 	})
 }
 
@@ -63,12 +63,12 @@ func Open(f Fataler, opts ...Option) *sql.DB {
 		opt.apply(f, &data)
 	}
 
-	if data.schemaPath != "" {
-		schemaBytes, err := ioutil.ReadFile(data.schemaPath)
+	for _, sp := range data.schemaPaths {
+		schemaBytes, err := ioutil.ReadFile(sp)
 		if err != nil {
-			f.Fatal(data.schemaPath, err)
+			f.Fatal(sp, err)
 		}
-		data.schema = string(schemaBytes)
+		data.schema = data.schema + "\n" + string(schemaBytes)
 	}
 
 	newDatabaseURL, err := mkdb(data.databaseURL)
