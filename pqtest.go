@@ -2,9 +2,11 @@ package pqtest
 
 import (
 	"database/sql"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/url"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -50,6 +52,27 @@ func SchemaFile(filePath string) Option {
 	})
 }
 
+// Migrations returns an Option that will initialize the new
+// test database by applying the contents of each sql file
+// in the provided directory, ordered by the filenames.
+func Migrations(dir string) Option {
+	return optionFn(func(f Fataler, data *optionData) {
+		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if filepath.Ext(path) != ".sql" || info.IsDir() {
+				return nil
+			}
+			data.schemaPaths = append(data.schemaPaths, path)
+			return nil
+		})
+		if err != nil {
+			f.Fatal(err)
+		}
+	})
+}
+
 // Open creates a new test PostgreSQL database, returning
 // a *sql.DB opened to the database.
 //
@@ -75,6 +98,7 @@ func Open(f Fataler, opts ...Option) *sql.DB {
 	if err != nil {
 		f.Fatal(err)
 	}
+	fmt.Println(newDatabaseURL)
 	db, err := sql.Open("postgres", newDatabaseURL)
 	if err != nil {
 		f.Fatal(err)

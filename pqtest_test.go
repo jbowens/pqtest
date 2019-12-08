@@ -17,3 +17,11 @@ func TestOpenSchema(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestMigrations(t *testing.T) {
+	db := Open(t, Migrations("migrations"))
+	err := db.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
